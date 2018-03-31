@@ -6,7 +6,10 @@ class CounterController < ApplicationController
   def index; end
 
   def increment
-    counter.increment if me?
+    if me?
+      counter.increment
+      CounterChannel.broadcast_to(counter, counter.count)
+    end
   end
 
   private
