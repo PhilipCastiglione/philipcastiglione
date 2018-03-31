@@ -56,6 +56,7 @@ group :development do
   gem 'guard-rubocop'
   gem 'rubocop'
   gem 'spring-commands-rubocop'
+  gem 'annotate'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
