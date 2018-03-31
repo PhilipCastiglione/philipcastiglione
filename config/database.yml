@@ -82,4 +82,4 @@ production:
   <<: *default
   database: philipcastiglione_production
   username: philipcastiglione
-  password: <%= ENV['PHILIPCASTIGLIONE_DATABASE_PASSWORD'] %>
+  password: <%= ENV.fetch('PHILIPCASTIGLIONE_DATABASE_PASSWORD', nil) %>
