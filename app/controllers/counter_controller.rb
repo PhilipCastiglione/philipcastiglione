@@ -1,18 +1,18 @@
 # Actions relating to the counter singleton.
 class CounterController < ApplicationController
-  before_action :get_counter
+  before_action :counter
   skip_before_action :verify_authenticity_token, only: [:increment]
 
   def index; end
 
   def increment
-    @counter.increment if me?
+    counter.increment if me?
   end
 
   private
 
-  def get_counter
-    @counter = Counter.singleton
+  def counter
+    @counter ||= Counter.singleton
   end
 
   def me?

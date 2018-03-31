@@ -8,6 +8,7 @@
 #  updated_at :datetime         not null
 #
 
+# Counter is useful for counting things. A toy for tracking state.
 class Counter < ApplicationRecord
   def self.singleton
     if Counter.any?

@@ -1,2 +1,26 @@
 Metrics/LineLength:
   Max: 120
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Layout/EmptyLinesAroundBlockBody:
+  Exclude:
+    - 'db/**/*.rb'
+
+Style/Documentation:
+  Exclude:
+    - 'db/**/*.rb'
+    - 'test/**/*.rb'
+
+Style/StringLiterals:
+  Exclude:
+    - 'db/**/*.rb'
+
+Style/NumericLiterals:
+  Exclude:
+    - 'db/**/*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'lib/tasks/*.rake'
