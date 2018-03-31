@@ -88,8 +88,7 @@ m = Module.new do # rubocop:disable Metrics/BlockLength
       require 'bundler/version'
     end
     return if require_error.nil? && required_successfully?(bundler_version)
-    warn "Activating bundler (#{bundler_version}) failed:\n#{gem_error.message}\n\n\
-      To install the version of bundler this project requires, run `gem install bundler -v '#{bundler_version}'`"
+    warn "Activating bundler (#{bundler_version}) failed:\n#{gem_error.message}\n\nTo install the version of bundler this project requires, run `gem install bundler -v '#{bundler_version}'`" # rubocop:disable Metrics/LineLength
     exit 42
   end
 

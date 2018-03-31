@@ -7,7 +7,7 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 # Use dotenv to load env vars (in dev, test)
-Dotenv::Railtie.load
+Dotenv::Railtie.load unless Rails.env.production?
 
 module Philipcastiglione
   # My personal website
