@@ -6,6 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Use dotenv to load env vars (in dev, test)
+Dotenv::Railtie.load
+
 module Philipcastiglione
   # My personal website
   class Application < Rails::Application
