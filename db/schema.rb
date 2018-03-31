@@ -17,4 +17,10 @@ ActiveRecord::Schema.define(version: 20180331015611) do
   enable_extension "uuid-ossp"
   enable_extension "pgcrypto"
 
+  create_table "counters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
 end
