@@ -1,5 +1,8 @@
 {
   "name": "philipcastiglione",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "jquery-ujs": "^1.2.2",
+    "microm": "^0.2.4"
+  }
 }

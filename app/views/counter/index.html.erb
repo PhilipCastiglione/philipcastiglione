@@ -1,3 +1,25 @@
+<style>
+.button {
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-size: contain;
+}
+#play {
+  background-image: url(<%= asset_path "play.svg" %>);
+}
+#pause {
+  background-image: url(<%= asset_path "pause.svg" %>);
+}
+.hidden {
+  display: none;
+}
+</style>
 <p>
   Count: <span id="count"><%= @counter.count %></span>
 </p>
+<p>
+  Press this button and say "increment counter". Press again when done.
+</p>
+<div id="play" class="button"></div>
+<div id="pause" class="button hidden"></div>
