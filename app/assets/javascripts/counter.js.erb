@@ -1,0 +1,91 @@
+function initializeAwsSdk() {
+  var creds = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: <%= ENV.fetch('AWS_IDENTITY_POOL_ID', nil) %>
+  });
+  AWS.config = {
+    credentials: creds,
+    region: 'us-east-1',
+    lexruntime: '2016-11-28',
+    polly: '2016-06-10'
+  };
+
+  var polly = new AWS.Polly();
+  var lex = null;
+  return [polly, lex];
+}
+
+function initializePollyResponder(polly, audio) {
+  window.pollyResponder = function(count) {
+    var text = 'Count has now been incremented to ' + count + '. Pretty incredible.';
+    var params = {
+      OutputFormat: 'mp3',
+      SampleRate: '22050',
+      Text: text,
+      TextType: 'text',
+      VoiceId: 'Matthew'
+    };
+
+    polly.synthesizeSpeech(params, function(err, data) {
+      if (err) {
+        alert('polly error: ' + err);
+      } else {
+        var uInt8Array = new Uint8Array(data.AudioStream);
+        var arrayBuffer = uInt8Array.buffer;
+        var blob = new Blob([arrayBuffer]);
+        var url = URL.createObjectURL(blob);
+        audio.src = url;
+        audio.play();
+      }
+    });
+  }
+}
+
+function initializeSoundRecording() {
+  var microm = new Microm();
+  var mpeg = null;
+  var play = document.getElementById('play');
+  var pause = document.getElementById('pause');
+  var isRecording = false;
+
+  var toggleRecording = function() {
+    if (isRecording) {
+      play.classList.remove('hidden');
+      pause.classList.add('hidden');
+    } else {
+      play.classList.add('hidden');
+      pause.classList.remove('hidden');
+    }
+    isRecording = !isRecording;
+  }
+
+  var startAudioCapture = function(e) {
+    if (!isRecording) {
+      toggleRecording();
+      microm.record()
+        .catch(() => { alert('error recording') });
+    }
+  };
+
+  var endAudioCapture = function(e) {
+    if (isRecording) {
+      toggleRecording();
+      microm.stop().then(function(result) {
+        // mpeg = result;
+
+        microm.play();
+      });
+    }
+  };
+
+  play.addEventListener('click', startAudioCapture, true);
+  pause.addEventListener('click', endAudioCapture, true);
+}
+
+$(document).on('turbolinks:load', () => {
+  var [polly, lex] = initializeAwsSdk();
+
+  var audio = new Audio();
+  initializePollyResponder(polly, audio);
+
+  initializeSoundRecording();
+});

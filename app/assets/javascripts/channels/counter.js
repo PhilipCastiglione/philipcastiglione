@@ -11,5 +11,6 @@ App.counter = App.cable.subscriptions.create("CounterChannel", {
     // Called when there's incoming data on the websocket for this channel
     var count = document.getElementById('count');
     count.innerText = data;
+    pollyResponder(data);
   }
 });
