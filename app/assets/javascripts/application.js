@@ -14,5 +14,5 @@
 //= require jquery-ujs
 //= require rails-ujs
 //= require turbolinks
-//= require microm
+//= require aws-lex-audio
 //= require_tree .

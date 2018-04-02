@@ -1,6 +1,15 @@
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 function initializeAwsSdk() {
   var creds = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: <%= ENV.fetch('AWS_IDENTITY_POOL_ID', nil) %>
+    IdentityPoolId: '<%= ENV.fetch('AWS_IDENTITY_POOL_ID', nil) %>'
   });
   AWS.config = {
     credentials: creds,
@@ -10,7 +19,7 @@ function initializeAwsSdk() {
   };
 
   var polly = new AWS.Polly();
-  var lex = null;
+  var lex = new AWS.LexRuntime();
   return [polly, lex];
 }
 
@@ -40,39 +49,51 @@ function initializePollyResponder(polly, audio) {
   }
 }
 
-function initializeSoundRecording() {
-  var microm = new Microm();
-  var mpeg = null;
+function initializeLexSender(lex) {
+  var sendToLex = function(stream) {
+    var params = {
+      botAlias: 'Playground',
+      botName: 'Playground',
+      contentType: 'audio/x-l16; sample-rate=16000',
+      inputStream: stream,
+      userId: guid(),
+      accept: 'text/plain; charset=utf-8'
+    };
+
+    lex.postContent(params, function (err, data) {
+      if (err) {
+        alert('Lex doesn\'t think you said "increment counter"');
+        console.log(err, err.stack);
+      }
+    });
+  }
+
+  return sendToLex;
+}
+
+function initializeSoundRecording(sendToLex) {
   var play = document.getElementById('play');
   var pause = document.getElementById('pause');
+  var audioControl = new LexAudio.audioControl();
   var isRecording = false;
-
-  var toggleRecording = function() {
-    if (isRecording) {
-      play.classList.remove('hidden');
-      pause.classList.add('hidden');
-    } else {
-      play.classList.add('hidden');
-      pause.classList.remove('hidden');
-    }
-    isRecording = !isRecording;
-  }
 
   var startAudioCapture = function(e) {
     if (!isRecording) {
-      toggleRecording();
-      microm.record()
-        .catch(() => { alert('error recording') });
+      isRecording = !isRecording;
+      play.classList.add('hidden');
+      pause.classList.remove('hidden');
+      audioControl.startRecording();
     }
   };
 
   var endAudioCapture = function(e) {
     if (isRecording) {
-      toggleRecording();
-      microm.stop().then(function(result) {
-        // mpeg = result;
-
-        microm.play();
+      isRecording = !isRecording;
+      play.classList.remove('hidden');
+      pause.classList.add('hidden');
+      audioControl.stopRecording();
+      audioControl.exportWAV(function(blob){
+        sendToLex(blob);
       });
     }
   };
@@ -87,5 +108,7 @@ $(document).on('turbolinks:load', () => {
   var audio = new Audio();
   initializePollyResponder(polly, audio);
 
-  initializeSoundRecording();
+  var sendToLex = initializeLexSender(lex);
+
+  initializeSoundRecording(sendToLex);
 });
